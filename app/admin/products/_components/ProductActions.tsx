@@ -20,7 +20,7 @@ export function ActiveToggleDropdownItem({id, isAvailableForPurchase}:{id: strin
 export function DeleteDropdownItem({id, disabled}:{id:string, disabled: boolean}){
     const [isPending, startTransition] = useTransition()
     const router = useRouter()
-    return <DropdownMenuItem disabled={disabled || isPending} onClick={()=> {
+    return <DropdownMenuItem  disabled={disabled || isPending} onClick={()=> {
         startTransition(async ()=>{
             await deleteProduct(id)
             router.refresh()
