@@ -1,12 +1,13 @@
 import { ProductCard, ProductCardSkeleton } from "@/components/ProductCard";
 import { Suspense } from "react";
 import db from "@/db/db";
-function getProducts(){
+import { cache } from "@/lib/cache";
+const getProducts= cache(()=>{
     return db.product.findMany({
         where: {isAvailableForPurchase: true},
         orderBy: {name: "asc"
     }})
-}
+}, ["/products", "getProducts"])
 export default function ProductsPage(){
     return  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
            
