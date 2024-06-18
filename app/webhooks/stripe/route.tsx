@@ -1,8 +1,11 @@
 import db from "@/db/db";
 import { NextRequest, NextResponse } from "next/server";
+import react from "react";
+import { Resend } from "resend";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
+const resend = new Resend(process.env.RESEND_API_KEY as string)
 export async function POST(req: NextRequest){
     const event = stripe.webhooks.constructEvent(await req.text(), req.headers.get("stripe-singature") as string, process.env.STRIPE_WEBHOOK_SECRET as string)
 
@@ -20,5 +23,17 @@ export async function POST(req: NextRequest){
         const {orders: [order]} = await db.user.upsert({where: {email}, create:userFields, update:userFields,
             select: {orders: {orderBy: {createdAt: "desc"}, take: 1}}
         })
+
+        const downloadVerfication = await db.downloadVerification.create({
+            data: {productId, expiresAt: new Date(Date.now() + 1000*60*60*24)}
+        })
+
+        await resend.emails.send({
+            from: `Support <${process.env.SENDER_EMAIL}`,
+            to: email, 
+            subject: "Order Confirmation",
+            react: <h1>Hi</h1>
+        })
     }
+    return new NextResponse()
 }
