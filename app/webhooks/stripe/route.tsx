@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import PurchaseReciptEmail from "@/email/PurchaseReceipt";
 import { NextRequest, NextResponse } from "next/server";
 import react from "react";
 import { Resend } from "resend";
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest){
             from: `Support <${process.env.SENDER_EMAIL}`,
             to: email, 
             subject: "Order Confirmation",
-            react: <h1>Hi</h1>
+            react: <PurchaseReciptEmail order={order} product={product} downloadVerificationId={downloadVerfication.id}/>
         })
     }
     return new NextResponse()
